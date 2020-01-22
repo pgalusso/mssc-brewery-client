@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.UUID;
 
+
 @Component
 @ConfigurationProperties(value = "sfg.brewery", ignoreUnknownFields = false)
 public class BreweryClient {
@@ -39,6 +40,4 @@ public class BreweryClient {
     public void setApiHost(String apihost) {
         this.apihost = apihost;
     }
-
-
 }
