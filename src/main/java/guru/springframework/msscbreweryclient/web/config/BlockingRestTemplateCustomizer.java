@@ -14,18 +14,24 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class BlockingRestTemplateCustomizer implements RestTemplateCustomizer {
-    @Value("${pooling.maxTotal}")
-    private int poolingMaxTotal;
-    @Value("${pooling.maxPerRoute}")
-    private int poolingMaxPerRoute;
+    private final int poolingMaxTotal;
+    private final int poolingMaxPerRoute;
 
-    @Value("${request.connectionTimeout}")
-    private int requestConnectionTimeout;
-    @Value("${request.socketTimeout}")
-    private int requestSocketTimeout;
+    private final int requestConnectionTimeout;
+    private final int requestSocketTimeout;
+
+    public BlockingRestTemplateCustomizer(@Value("${pooling.maxTotal}") int poolingMaxTotal,
+                                          @Value("${pooling.maxPerRoute}") int poolingMaxPerRoute,
+                                          @Value("${request.connectionTimeout}") int requestConnectionTimeout,
+                                          @Value("${request.socketTimeout}") int requestSocketTimeout) {
+        this.poolingMaxTotal = poolingMaxTotal;
+        this.poolingMaxPerRoute = poolingMaxPerRoute;
+        this.requestConnectionTimeout = requestConnectionTimeout;
+        this.requestSocketTimeout = requestSocketTimeout;
+    }
 
     public ClientHttpRequestFactory clientHttpRequestFactory() {
-        PoolingHttpClientConnectionManager connectionManager =new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         connectionManager.setMaxTotal(poolingMaxTotal);
         connectionManager.setDefaultMaxPerRoute(poolingMaxPerRoute);
 
@@ -38,7 +44,7 @@ public class BlockingRestTemplateCustomizer implements RestTemplateCustomizer {
         CloseableHttpClient httpClient = HttpClients
                 .custom()
                 .setConnectionManager(connectionManager)
-                .setKeepAliveStrategy( new DefaultConnectionKeepAliveStrategy())
+                .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
                 .setDefaultRequestConfig(requestConfig)
                 .build();
 
